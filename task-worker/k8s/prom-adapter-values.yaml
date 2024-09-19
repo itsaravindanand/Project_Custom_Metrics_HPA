@@ -1,0 +1,17 @@
+prometheus:
+  url: http://prometheus-server.default.svc
+  port: 80 #port number from the prometheus-server service
+rules:
+  default: false
+  custom:
+    - seriesQuery: 'queue_length{job="custom-metric"}' #job is scraping defined in prom-server-conf
+      resources:
+        overrides:
+          namespace:
+            resource: namespace
+          pod:
+            resource: pod
+      name:
+        matches: "^(.*)$"
+        as: "${1}"
+      metricsQuery: 'queue_length{job="custom-metric",namespace!="",pod!=""}'

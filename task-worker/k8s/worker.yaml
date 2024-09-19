@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: worker-deploy
+  template:
+    metadata:
+      labels:
+        app: worker-deploy
+    spec:
+      containers:
+        - name: worker-container
+          image: worker:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 1234
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: worker-service
+  labels:
+    app: worker-service
+spec:
+  ports:
+    - port: 1234
+      targetPort: 1234
+  selector:
+    app: worker-deploy

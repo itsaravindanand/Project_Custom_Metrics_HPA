@@ -1,0 +1,2 @@
+server:
+  configMapOverrideName: server-conf
